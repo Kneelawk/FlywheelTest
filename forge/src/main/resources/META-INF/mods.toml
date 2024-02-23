@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "flywheel_test"
+version = "${version}"
+displayName = "Flywheel Test"
+authors = "Kneelawk"
+description = '''
+Testing out Flywheel 1.0
+'''
+#logoFile = ""
+
+[[dependencies.flywheel_test]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.flywheel_test]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"

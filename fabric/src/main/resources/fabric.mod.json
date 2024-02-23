@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "flywheel_test",
+  "version": "${version}",
+  "name": "Flywheel Test",
+  "description": "Testing out Flywheel 1.0",
+  "authors": [
+    "Kneelawk"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "MIT",
+  "icon": "assets/examplemod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.kneelawk.flywheeltest.fabric.FlywheelTestModFabric"
+    ]
+  },
+  "mixins": [
+    "flywheel_test.mixins.json",
+    "flywheel_test-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20.1"
+  }
+}
