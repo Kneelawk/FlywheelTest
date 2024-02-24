@@ -22,9 +22,7 @@ public class VRMMesh implements Mesh {
     private final GLTFData.GLTFPrimitive primitive;
     private final Vector4fc boundingSphere;
 
-    private final int indexCount;
-    private final int indexOffset;
-    private final int indexLen;
+    private final VRMIndexSequence indices;
 
     private final int vertexCount;
     private final int positionOffset;
@@ -41,10 +39,8 @@ public class VRMMesh implements Mesh {
         this.boundingSphere = boundingSphere;
 
         GLTFData.GLTFAccessor indexAccessor = data.accessors[primitive.indices];
-        indexCount = indexAccessor.count;
         GLTFData.GLTFBufferView indexView = data.bufferViews[indexAccessor.bufferView];
-        indexOffset = indexView.byteOffset;
-        indexLen = indexView.byteLength;
+        indices = new VRMIndexSequence(binary, indexAccessor.count, indexView.byteOffset, indexView.byteLength);
 
         GLTFData.GLTFAccessor positionAccessor = data.accessors[primitive.attributes.POSITION];
         vertexCount = positionAccessor.count;
@@ -86,18 +82,12 @@ public class VRMMesh implements Mesh {
 
     @Override
     public @NotNull IndexSequence indexSequence() {
-        return (ptr, count) -> {
-            IntBuffer indexBuffer =
-                ByteBuffer.wrap(binary, indexOffset, indexLen).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
-            for (int i = 0; i < indexCount; i++) {
-                MemoryUtil.memPutInt(ptr + i * 4L, indexBuffer.get(i));
-            }
-        };
+        return indices;
     }
 
     @Override
     public int indexCount() {
-        return indexCount;
+        return indices.indexCount;
     }
 
     @Override
@@ -108,5 +98,29 @@ public class VRMMesh implements Mesh {
     @Override
     public void delete() {
 
+    }
+
+    private static class VRMIndexSequence implements IndexSequence {
+        private final byte[] binary;
+
+        private final int indexCount;
+        private final int indexOffset;
+        private final int indexLen;
+
+        private VRMIndexSequence(byte[] binary, int indexCount, int indexOffset, int indexLen) {
+            this.binary = binary;
+            this.indexCount = indexCount;
+            this.indexOffset = indexOffset;
+            this.indexLen = indexLen;
+        }
+
+        @Override
+        public void fill(long ptr, int count) {
+            IntBuffer indexBuffer =
+                ByteBuffer.wrap(binary, indexOffset, indexLen).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
+            for (int i = 0; i < indexCount; i++) {
+                MemoryUtil.memPutInt(ptr + i * 4L, indexBuffer.get(i));
+            }
+        }
     }
 }
