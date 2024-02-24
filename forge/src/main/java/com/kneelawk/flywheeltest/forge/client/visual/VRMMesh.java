@@ -32,6 +32,8 @@ public class VRMMesh implements Mesh {
     private final int texOffset;
     private final int texLen;
 
+    private final GLTFData.GLTFMaterial material;
+
     public VRMMesh(GLTFData data, byte[] binary, GLTFData.GLTFPrimitive primitive, Vector4fc boundingSphere) {
         this.data = data;
         this.binary = binary;
@@ -53,6 +55,8 @@ public class VRMMesh implements Mesh {
         GLTFData.GLTFBufferView texView = data.bufferViews[data.accessors[primitive.attributes.TEXCOORD_0].bufferView];
         texOffset = texView.byteOffset;
         texLen = texView.byteLength;
+
+        material = data.materials[primitive.material];
     }
 
     @Override
@@ -68,6 +72,7 @@ public class VRMMesh implements Mesh {
             ByteBuffer.wrap(binary, normalOffset, normalLen).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
         FloatBuffer texBuffer =
             ByteBuffer.wrap(binary, texOffset, texLen).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
+        float[] colorFactor = material.pbrMetallicRoughness.baseColorFactor;
         for (int i = 0; i < vertexCount; i++) {
             vertexList.x(i, positionBuffer.get(i * 3));
             vertexList.y(i, positionBuffer.get(i * 3 + 1));
@@ -77,6 +82,10 @@ public class VRMMesh implements Mesh {
             vertexList.normalZ(i, normalBuffer.get(i * 3 + 2));
             vertexList.u(i, texBuffer.get(i * 2));
             vertexList.v(i, texBuffer.get(i * 2 + 1));
+            vertexList.r(i, colorFactor[0]);
+            vertexList.g(i, colorFactor[1]);
+            vertexList.b(i, colorFactor[2]);
+            vertexList.a(i, colorFactor[3]);
         }
     }
 

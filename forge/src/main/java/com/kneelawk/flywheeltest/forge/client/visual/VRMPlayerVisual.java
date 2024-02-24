@@ -38,13 +38,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import com.kneelawk.flywheeltest.forge.client.FlywheelTestModForgeClient;
 import com.kneelawk.flywheeltest.glow.glb.GLBLoader;
 import com.kneelawk.flywheeltest.glow.glb.impl.GLBData;
 import com.kneelawk.flywheeltest.glow.gltf.impl.GLTFData;
 
 public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
     private final Model model;
-    private TransformedInstance instance;
+    private VRMInstance instance;
     private final PoseStack stack = new PoseStack();
 
     public static boolean isVRMPlayer(Player player) {
@@ -59,7 +60,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
     @Override
     public void init(float partialTick) {
-        instance = instancerProvider.instancer(InstanceTypes.TRANSFORMED, model).createInstance();
+        instance = instancerProvider.instancer(FlywheelTestModForgeClient.VRM_INSTANCE_TYPE, model).createInstance();
 
         super.init(partialTick);
     }
@@ -132,9 +133,8 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 //                    }
                 });
 
-                Material material =
-                    SimpleMaterial.builder().cutout(CutoutShaders.HALF).mipmap(false).diffuse(false).texture(textureId)
-                        .build();
+                Material material = SimpleMaterial.builder().cutout(CutoutShaders.HALF).mipmap(false).diffuse(false)
+                    .backfaceCulling(false).texture(textureId).build();
 
                 modelBuilder.put(material, new VRMMesh(data.data, data.binaryData, primitive, boundingSphere));
             }
