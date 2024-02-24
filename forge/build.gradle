@@ -32,6 +32,9 @@ dependencies {
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+    
+    modImplementation "com.jozufozu.flywheel:flywheel-forge-1.20.1:${rootProject.flywheel_version}"
+    include "com.jozufozu.flywheel:flywheel-forge-1.20.1:${rootProject.flywheel_version}"
 }
 
 processResources {
