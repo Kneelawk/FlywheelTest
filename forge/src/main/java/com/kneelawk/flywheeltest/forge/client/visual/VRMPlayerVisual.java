@@ -18,7 +18,6 @@ import com.jozufozu.flywheel.lib.material.CutoutShaders;
 import com.jozufozu.flywheel.lib.material.SimpleMaterial;
 import com.jozufozu.flywheel.lib.model.SimpleModel;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisual;
-import com.jozufozu.flywheel.lib.visual.components.ShadowComponent;
 
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -26,6 +25,7 @@ import org.joml.Vector4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
@@ -63,7 +63,8 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
         Vec3 pos = entity.position();
         stack.translate(pos.x, pos.y, pos.z);
 
-        instance.setTransform(stack);
+        instance.updateLight(Minecraft.getInstance().level, entity.blockPosition());
+        instance.setTransform(stack).setChanged();
     }
 
     @Override

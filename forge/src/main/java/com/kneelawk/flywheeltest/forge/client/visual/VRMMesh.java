@@ -87,10 +87,11 @@ public class VRMMesh implements Mesh {
     @Override
     public @NotNull IndexSequence indexSequence() {
         return (ptr, count) -> {
-            IntBuffer indexIntoBuffer = MemoryUtil.memIntBuffer(ptr, count);
-            IntBuffer indexFromBuffer =
+            IntBuffer indexBuffer =
                 ByteBuffer.wrap(binary, indexOffset, indexLen).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer();
-            indexIntoBuffer.put(0, indexFromBuffer, 0, count);
+            for (int i = 0; i < indexCount; i++) {
+                MemoryUtil.memPutInt(ptr + i * 4L, indexBuffer.get(i));
+            }
         };
     }
 
