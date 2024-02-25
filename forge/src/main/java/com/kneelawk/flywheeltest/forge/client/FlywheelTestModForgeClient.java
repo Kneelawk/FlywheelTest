@@ -4,7 +4,9 @@ import com.jozufozu.flywheel.api.instance.InstanceType;
 import com.jozufozu.flywheel.api.layout.FloatRepr;
 import com.jozufozu.flywheel.api.layout.IntegerRepr;
 import com.jozufozu.flywheel.api.layout.LayoutBuilder;
+import com.jozufozu.flywheel.api.material.MaterialShaders;
 import com.jozufozu.flywheel.lib.instance.SimpleInstanceType;
+import com.jozufozu.flywheel.lib.material.SimpleMaterialShaders;
 import com.jozufozu.flywheel.lib.math.MatrixMath;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisualizer;
 
@@ -44,6 +46,9 @@ public class FlywheelTestModForgeClient {
         .vertexShader(id("instance/vrm.vert"))
         .cullShader(id("instance/cull/vrm.glsl"))
         .register();
+
+    public static final MaterialShaders VRM_MATERIAL_SHADERS = MaterialShaders.REGISTRY.registerAndGet(
+        new SimpleMaterialShaders(id("material/vrm.vert"), id("material/vrm.frag")));
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {

@@ -131,7 +131,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
                 });
 
                 Material material = SimpleMaterial.builder().cutout(CutoutShaders.HALF).mipmap(false).diffuse(false)
-                    .backfaceCulling(false).texture(textureId).build();
+                    .backfaceCulling(false).texture(textureId).shaders(FlywheelTestModForgeClient.VRM_MATERIAL_SHADERS).build();
 
                 modelBuilder.add(new Model.ConfiguredMesh(material,
                     new VRMMesh(data.data, data.binaryData, primitive, boundingSphere)));
