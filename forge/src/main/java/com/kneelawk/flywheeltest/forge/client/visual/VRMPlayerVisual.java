@@ -7,14 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import com.jozufozu.flywheel.api.material.Material;
-import com.jozufozu.flywheel.api.model.Mesh;
 import com.jozufozu.flywheel.api.model.Model;
 import com.jozufozu.flywheel.api.visual.VisualFrameContext;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
-import com.jozufozu.flywheel.lib.instance.InstanceTypes;
-import com.jozufozu.flywheel.lib.instance.TransformedInstance;
 import com.jozufozu.flywheel.lib.material.CutoutShaders;
 import com.jozufozu.flywheel.lib.material.SimpleMaterial;
 import com.jozufozu.flywheel.lib.model.SimpleModel;
@@ -84,7 +81,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
         instance.delete();
     }
 
-    private static ImmutableMap<Material, Mesh> loadVRM(Player player) {
+    private static ImmutableList<Model.ConfiguredMesh> loadVRM(Player player) {
         Path vrm = FMLLoader.getGamePath().resolve("Data Cloud 1.vrm");
         GLBData data;
         try (InputStream is = Files.newInputStream(vrm)) {
@@ -100,7 +97,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
         Int2ObjectMap<ResourceLocation> image2RL = new Int2ObjectOpenHashMap<>();
 
-        ImmutableMap.Builder<Material, Mesh> modelBuilder = ImmutableMap.builder();
+        ImmutableList.Builder<Model.ConfiguredMesh> modelBuilder = ImmutableList.builder();
         for (GLTFData.GLTFMesh mesh : data.data.meshes) {
             for (GLTFData.GLTFPrimitive primitive : mesh.primitives) {
                 GLTFData.GLTFMaterial gltfMaterial = data.data.materials[primitive.material];
@@ -136,7 +133,8 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
                 Material material = SimpleMaterial.builder().cutout(CutoutShaders.HALF).mipmap(false).diffuse(false)
                     .backfaceCulling(false).texture(textureId).build();
 
-                modelBuilder.put(material, new VRMMesh(data.data, data.binaryData, primitive, boundingSphere));
+                modelBuilder.add(new Model.ConfiguredMesh(material,
+                    new VRMMesh(data.data, data.binaryData, primitive, boundingSphere)));
             }
         }
 
