@@ -17,6 +17,12 @@ loom {
         mixinConfig "flywheel_test-common.mixins.json"
         mixinConfig "flywheel_test.mixins.json"
     }
+
+    runs {
+        client {
+            programArgs "--width", "1280", "--height", "720"
+        }
+    }
 }
 
 configurations {
@@ -32,7 +38,7 @@ dependencies {
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
-    
+
     modImplementation "com.jozufozu.flywheel:flywheel-forge-1.20.1:${rootProject.flywheel_version}"
     include "com.jozufozu.flywheel:flywheel-forge-1.20.1:${rootProject.flywheel_version}"
 }
