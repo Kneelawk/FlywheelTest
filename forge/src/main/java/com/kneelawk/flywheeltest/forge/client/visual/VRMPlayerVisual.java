@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -166,7 +167,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
                         }
                     }
                     
-                    nativeImage.setPixelRGBA(0, 0, 0xDEADBEEF);
+                    writeInt(nativeImage, 0, 0, 0xDEADBEEF);
 
                     DynamicTexture imageTexture = new DynamicTexture(nativeImage);
                     // FIXME: this probably leaks memory like crazy!
@@ -190,6 +191,16 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
         }
 
         return modelBuilder.build();
+    }
+    
+    private static void writeInt(NativeImage image, int x, int y, int i) {
+        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+            // Most machines this is on are little-endian, so this is the default
+            image.setPixelRGBA(x, y, i);
+        } else {
+            // not so many machines are bit-endian, so we do the conversion here
+            image.setPixelRGBA(x, y, ((i << 24) & 0xFF000000) | ((i << 8) & 0xFF0000) | ((i >> 8) & 0xFF00) | ((i >> 24) & 0xFF));
+        }
     }
 
     private static boolean almostZero(float[] floats) {
