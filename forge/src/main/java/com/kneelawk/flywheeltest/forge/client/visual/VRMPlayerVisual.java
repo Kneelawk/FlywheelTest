@@ -165,6 +165,8 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
                             return missingMaterial;
                         }
                     }
+                    
+                    nativeImage.setPixelRGBA(0, 0, FastColor.ABGR32.color(255, 120, 254, 2));
 
                     DynamicTexture imageTexture = new DynamicTexture(nativeImage);
                     // FIXME: this probably leaks memory like crazy!
