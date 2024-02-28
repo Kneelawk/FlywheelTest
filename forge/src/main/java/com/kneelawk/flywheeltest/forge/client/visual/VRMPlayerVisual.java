@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
 import com.jozufozu.flywheel.api.material.Material;
@@ -45,6 +46,7 @@ import com.kneelawk.flywheeltest.glow.glb.impl.GLBData;
 import com.kneelawk.flywheeltest.glow.gltf.impl.GLTFData;
 
 public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
+    private static final Pattern BLOCKED_CHARS = Pattern.compile("[^a-z0-9/._-]");
 
     private final Model model;
     private VRMInstance instance;
@@ -226,9 +228,10 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
     }
 
     private static ResourceLocation registerTexture(String name, DynamicTexture texture) {
+        String textureName = BLOCKED_CHARS.matcher(name).replaceAll("_");
         TextureManager manager = Minecraft.getInstance().getTextureManager();
         synchronized (manager) {
-            return manager.register(name, texture);
+            return manager.register(textureName, texture);
         }
     }
 }
