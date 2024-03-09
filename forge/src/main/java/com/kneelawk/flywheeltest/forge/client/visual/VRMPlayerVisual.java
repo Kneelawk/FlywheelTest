@@ -21,6 +21,7 @@ import com.jozufozu.flywheel.lib.visual.SimpleEntityVisual;
 
 import net.minecraftforge.fml.loading.FMLLoader;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryUtil;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -30,14 +31,15 @@ import org.joml.Vector4f;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import com.kneelawk.flywheeltest.FlywheelTestMod;
 import com.kneelawk.flywheeltest.forge.client.FlywheelTestModForgeClient;
@@ -70,12 +72,22 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
     }
 
     @Override
-    public void beginFrame(VisualFrameContext ctx) {
+    public void beginFrame(@NotNull VisualFrameContext ctx) {
         super.beginFrame(ctx);
 
+        float partialTick = ctx.partialTick();
+
         stack.setIdentity();
-        Vec3 pos = entity.position();
-        stack.translate(pos.x, pos.y, pos.z);
+
+        double posX = Mth.lerp(partialTick, entity.xOld, entity.getX());
+        double posY = Mth.lerp(partialTick, entity.yOld, entity.getY());
+        double posZ = Mth.lerp(partialTick, entity.zOld, entity.getZ());
+
+        stack.translate(posX - renderOrigin.getX(), posY - renderOrigin.getY(), posZ - renderOrigin.getZ());
+
+        float yaw = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
+
+        stack.mulPose(Axis.YP.rotationDegrees(-yaw));
 
         instance.updateLight(Minecraft.getInstance().level, entity.blockPosition());
         instance.setTransform(stack).setChanged();
@@ -161,14 +173,16 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
                                     }
                                 }
                             } else {
-                                FlywheelTestMod.LOG.warn("Attempted to add emissive texture '" + emissiveImage.name + "' to '" + image.name + "' but they have different sizes");
+                                FlywheelTestMod.LOG.warn(
+                                    "Attempted to add emissive texture '" + emissiveImage.name + "' to '" + image.name +
+                                        "' but they have different sizes");
                             }
                         } catch (IOException e) {
                             FlywheelTestMod.LOG.error("Error loading emissive vrm image: '" + emissiveImage.name + "'");
                             return missingMaterial;
                         }
                     }
-                    
+
                     writeInt(nativeImage, 0, 0, 0xDEADBEEF);
 
                     DynamicTexture imageTexture = new DynamicTexture(nativeImage);
@@ -194,14 +208,15 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
         return modelBuilder.build();
     }
-    
+
     private static void writeInt(NativeImage image, int x, int y, int i) {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
             // Most machines this is on are little-endian, so this is the default
             image.setPixelRGBA(x, y, i);
         } else {
             // not so many machines are bit-endian, so we do the conversion here
-            image.setPixelRGBA(x, y, ((i << 24) & 0xFF000000) | ((i << 8) & 0xFF0000) | ((i >> 8) & 0xFF00) | ((i >> 24) & 0xFF));
+            image.setPixelRGBA(x, y,
+                ((i << 24) & 0xFF000000) | ((i << 8) & 0xFF0000) | ((i >> 8) & 0xFF00) | ((i >> 24) & 0xFF));
         }
     }
 
