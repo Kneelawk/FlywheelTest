@@ -1,6 +1,6 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
 }
 
 architectury {
@@ -13,7 +13,7 @@ subprojects {
     loom {
         silentMojangMappingsLicense()
     }
-    
+
     repositories {
         maven {
             name = 'ParchmentMC'
@@ -30,6 +30,8 @@ subprojects {
         }
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
+
+        compileOnly("com.google.code.findbugs:jsr305:3.0.2")
     }
 }
 

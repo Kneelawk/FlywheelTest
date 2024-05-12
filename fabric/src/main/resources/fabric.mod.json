@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.kneelawk.flywheeltest.fabric.FlywheelTestModFabric"
+    ],
+    "client": [
+      "com.kneelawk.flywheeltest.fabric.client.FlywheelTestModFabricClient"
     ]
   },
   "mixins": [

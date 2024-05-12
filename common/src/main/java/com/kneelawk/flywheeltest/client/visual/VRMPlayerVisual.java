@@ -1,4 +1,4 @@
-package com.kneelawk.flywheeltest.forge.client.visual;
+package com.kneelawk.flywheeltest.client.visual;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -12,14 +12,11 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableList;
 import com.jozufozu.flywheel.api.material.Material;
 import com.jozufozu.flywheel.api.model.Model;
-import com.jozufozu.flywheel.api.visual.VisualFrameContext;
 import com.jozufozu.flywheel.api.visualization.VisualizationContext;
 import com.jozufozu.flywheel.lib.material.CutoutShaders;
 import com.jozufozu.flywheel.lib.material.SimpleMaterial;
 import com.jozufozu.flywheel.lib.model.SimpleModel;
 import com.jozufozu.flywheel.lib.visual.SimpleEntityVisual;
-
-import net.minecraftforge.fml.loading.FMLLoader;
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.system.MemoryUtil;
@@ -42,7 +39,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 import com.kneelawk.flywheeltest.FlywheelTestMod;
-import com.kneelawk.flywheeltest.forge.client.FlywheelTestModForgeClient;
+import com.kneelawk.flywheeltest.client.FlywheelTestModClient;
+import com.kneelawk.flywheeltest.client.Platform;
 import com.kneelawk.flywheeltest.glow.glb.GLBLoader;
 import com.kneelawk.flywheeltest.glow.glb.impl.GLBData;
 import com.kneelawk.flywheeltest.glow.gltf.impl.GLTFData;
@@ -66,13 +64,13 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
     @Override
     public void init(float partialTick) {
-        instance = instancerProvider.instancer(FlywheelTestModForgeClient.VRM_INSTANCE_TYPE, model).createInstance();
+        instance = instancerProvider.instancer(FlywheelTestModClient.VRM_INSTANCE_TYPE, model).createInstance();
 
         super.init(partialTick);
     }
 
     @Override
-    public void beginFrame(@NotNull VisualFrameContext ctx) {
+    public void beginFrame(@NotNull Context ctx) {
         super.beginFrame(ctx);
 
         float partialTick = ctx.partialTick();
@@ -89,7 +87,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
         stack.mulPose(Axis.YP.rotationDegrees(-yaw));
 
-        instance.updateLight(Minecraft.getInstance().level, entity.blockPosition());
+        relight(entity.blockPosition(), instance);
         instance.setTransform(stack).setChanged();
     }
 
@@ -101,7 +99,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
     }
 
     private static ImmutableList<Model.ConfiguredMesh> loadVRM(Player player) {
-        Path vrm = FMLLoader.getGamePath().resolve("Data Cloud 1.vrm");
+        Path vrm = Platform.INSTANCE.getGamePath().resolve("Data Cloud 1.vrm");
         GLBData data;
         try (InputStream is = Files.newInputStream(vrm)) {
             data = GLBLoader.loadRaw(new BufferedInputStream(is));
@@ -198,7 +196,7 @@ public class VRMPlayerVisual extends SimpleEntityVisual<Player> {
 
                     return SimpleMaterial.builder().cutout(CutoutShaders.HALF).mipmap(false).diffuse(false)
                         .backfaceCulling(false).texture(textureId)
-                        .shaders(FlywheelTestModForgeClient.VRM_MATERIAL_SHADERS).build();
+                        .shaders(FlywheelTestModClient.VRM_MATERIAL_SHADERS).build();
                 });
 
                 modelBuilder.add(new Model.ConfiguredMesh(material,

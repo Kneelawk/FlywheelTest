@@ -14,8 +14,8 @@ void flw_materialFragment() {
     //    float factor = 1.0 + ((clamp((dot(vrm_lightPosition, flw_vertexNormal) + vrm_lightOffset) * vrm_lightSharpness, -1.0, 1.0) + 1.0) / 2.0 - 1.0) * vrm_lightFactor;
 
     //    flw_fragColor.xyz *= factor;
-    
-    if (vrm_readInt(ivec2(0, 0)) == 0xDEADBEEF) {
-        flw_fragColor = vec4(1.0);
-    }
+
+    //    if (vrm_readInt(ivec2(0, 0)) == 0xDEADBEEF) {
+    //        flw_fragColor = vec4(1.0);
+    //    }
 }

@@ -1,4 +1,4 @@
-package com.kneelawk.flywheeltest.forge.client.visual;
+package com.kneelawk.flywheeltest.client.visual;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
