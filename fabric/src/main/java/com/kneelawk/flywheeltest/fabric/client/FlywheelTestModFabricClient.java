@@ -7,5 +7,6 @@ import com.kneelawk.flywheeltest.client.FlywheelTestModClient;
 public class FlywheelTestModFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        FlywheelTestModClient.registerVisuals();
     }
 }
